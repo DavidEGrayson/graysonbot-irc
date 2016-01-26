@@ -39,26 +39,26 @@ describe IrcMessage do
     end
   end
 
-  describe "to_str" do
+  describe "to_s" do
     it "can assemble a simple command" do
       msg = IrcMessage.new('PONG', 'abc.foo')
-      expect(msg.to_str).to eq "PONG abc.foo"
+      expect(msg.to_s).to eq "PONG abc.foo\r\n"
     end
 
     it "can assemble a command with a prefix" do
       msg = IrcMessage.new('PONG', 'what')
       msg.prefix = '123'
-      expect(msg.to_str).to eq ":123 PONG what"
+      expect(msg.to_s).to eq ":123 PONG what\r\n"
     end
 
     it "can assemble a command with a trailing parameter with spaces" do
       msg = IrcMessage.new('you', 'can', 'have some spaces')
-      expect(msg.to_str).to eq "you can :have some spaces"
+      expect(msg.to_s).to eq "you can :have some spaces\r\n"
     end
 
     it "can assemble a command with a trailing parameter with a colon" do
       msg = IrcMessage.new('you', 'can', ':startwithcolon')
-      expect(msg.to_str).to eq "you can ::startwithcolon"
+      expect(msg.to_s).to eq "you can ::startwithcolon\r\n"
     end
 
     it "complains if parameters before the last one have spaces" do

@@ -50,7 +50,7 @@ class IrcMessage
     end
   end
 
-  def to_str
+  def to_s
     validate_params!
 
     str = ""
@@ -68,6 +68,8 @@ class IrcMessage
 
       str << ' :' + trailing_param if trailing_param
     end
+
+    str << "\r\n"
 
     str
   end
