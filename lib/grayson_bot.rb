@@ -31,7 +31,7 @@ class GraysonBot
       elsif msg.params.size > 1
         # forwarding a PING to another server is not implemented
       else
-        send 'PONG', msg.params[1]
+        send 'PONG', msg.params.first
       end
     end
   end

@@ -58,6 +58,9 @@ class IrcMessage
     str << "#{command} "
 
     if !params.empty?
+      if params.last == nil
+        raise 'wtf ' + params.inspect
+      end
       if params.last.include?(' ') || params.last[0] == ':'
         *normal_params, trailing_param = params
       else
@@ -77,6 +80,12 @@ class IrcMessage
   private
 
   def validate_params!
+    params.each do |param|
+      if !param.is_a?(String)
+        raise "IRC message parameters must be strings, got a #{param.class}."
+      end
+    end
+
     params[0..-2].each do |param|
       if param.include?(' ')
         raise "IRC message parameters that are not the last parameter " \
