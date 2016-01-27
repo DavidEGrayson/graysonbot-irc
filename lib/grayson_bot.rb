@@ -33,11 +33,23 @@ class GraysonBot
       else
         send 'PONG', msg.params.first
       end
+    when 'PRIVMSG'
+      if msg.prefix.start_with?('GraysonHome!') && msg.params[1] == 'tmphax'
+        tmphax
+      end
     end
   end
 
   def send(command, *params)
     message = IrcMessage.new(command, *params)
     @socket.print message
+  end
+
+  def tmphax
+    # Typical message from GraysonBot to Gr3yBot:
+    # ":GraysonBot!GraysonBot@12345678 PRIVMSG Gr3yBot :contents\r\n"
+    # Length = 51 + contents
+
+    send "PRIVMSG", "GraysonHome", "heyoheyo"
   end
 end
