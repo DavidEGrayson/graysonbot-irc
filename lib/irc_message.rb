@@ -12,8 +12,6 @@ class IrcMessage
   def initialize(command = nil, *params)
     @command = command
     @params = params
-
-    validate_params!
   end
 
   def initialize_from_str(str)
@@ -48,12 +46,13 @@ class IrcMessage
         pos = md.offset(0)[1]
       end
     end
+    @params.freeze
   end
 
   def to_s
-    validate_params!
+    validate_contents!
 
-    str = ""
+    str = "".force_encoding("ASCII-8BIT")
     str << ":#{prefix} " if prefix
     str << "#{command} "
 
@@ -74,15 +73,39 @@ class IrcMessage
 
     str << "\r\n"
 
+    if str.bytesize > 512
+      raise "IRC message was too long (513 bytes, limit is 512)."
+    end
+
     str
   end
 
   private
 
-  def validate_params!
+  def validate_contents!
+    if prefix
+      # TODO: validate prefix
+    end
+
+    if !command.is_a?(String)
+      raise "IRC message command must be a string, got a #{command.class}."
+    end
+
+    if command.include?("\x00") || command.include?(" ") ||
+       command.include?(":") || command.include?("\r") || command.include?("\n")
+      raise "Invalid character in IRC message command."
+    end
+
     params.each do |param|
       if !param.is_a?(String)
         raise "IRC message parameters must be strings, got a #{param.class}."
+      end
+
+      # IRC spec says only certain characters are allowed; I am not
+      # sure how people use Unicode in practice.
+
+      if param.include?("\x00") || param.include?("\r") || param.include?("\n")
+        raise "Invalid character in IRC message parameter."
       end
     end
 
